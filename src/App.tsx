@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'
+import { FaGoogle } from 'react-icons/fa'
+import firebase from './api/firebase'
+import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(user => {
+            if(user) {
+                alert('usuario logado')
+            } else {
+                alert('usuario nao logado')
+            }
+        })
+    }, [])
+
+    const login = () => {
+        const provider = new firebase.auth.GoogleAuthProvider()
+        firebase.auth().signInWithPopup(provider).then(res => {
+            console.log(res)
+        }).catch(err => {
+            alert('erro ao logar')
+        })
+    }
+
+    return (
+        <div className="container">
+            <button onClick={login}><FaGoogle size={25} color='black' /></button>
+        </div>
+    )
 }
 
-export default App;
+export default App
