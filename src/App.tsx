@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FaGoogle } from 'react-icons/fa'
 import firebase from './api/firebase'
 import './App.css'
@@ -15,6 +15,8 @@ function App() {
         })
     }, [])
 
+    const inputRef = useRef<HTMLInputElement>(null)
+
     const login = () => {
         const provider = new firebase.auth.GoogleAuthProvider()
         firebase.auth().signInWithPopup(provider).then(res => {
@@ -24,9 +26,25 @@ function App() {
         })
     }
 
+    const uploadImage = () => {
+        const storeRef = firebase.storage().ref()
+        if(!inputRef.current?.files) {
+            return
+        }
+
+        storeRef.child(`${Date.now()}.png`).put(inputRef.current.files[0]).then(res => {
+            alert('uploaded successfully')
+        }).catch(err => {
+            alert('error')
+        })
+    }
+
     return (
         <div className="container">
             <button onClick={login}><FaGoogle size={25} color='black' /></button>
+            <input ref={inputRef} type="file"/>
+
+            <button onClick={uploadImage}>Upload</button>
         </div>
     )
 }
